@@ -1,5 +1,5 @@
 # fb-3d-playground
-A simple 3D wireframe playground to learn and test 3D concepts. Intended as an introductory tutorial.
+A simple wireframe playground to learn and test 3D concepts. Intended as an introductory tutorial.
 
 This is a revised and expanded FreeBasic port of a wonderful tutorial by Lode Vandevenne that, sadly, isn't available anymore. It laid out the basic math and concepts used in the creation and representation of a 3D scene, using a pinhole camera model.
 
