@@ -80,7 +80,7 @@ function Vec4.squaredLength() as single
     Returns the squared length of this vector.
     
     Useful when you just want to compare which one is bigger, as
-    this avoids having to compute a square root
+    this avoids having to compute a square root.
   '/
   return( x * x + y * y + z * z )
 end function
@@ -99,27 +99,22 @@ sub Vec4.setLength( l as single )
 end sub
 
 sub Vec4.normalize()
-  /'
-    Normalizes the vector
-    Note that the homogeneous coordinate (w) is not touched
-  '/
-	dim as single l = 1.0 / length()
-	
-	if l > 0 then
+  '' Normalizes the vector.
+  '' Note that the homogeneous coordinate (w) is not touched.
+  dim as single l = 1.0 / length()
+  
+  if l > 0 then
     x *= l : y *= l : z *= l
-	end if
+  end if
 end sub
 
 function normalize( v as Vec4 ) as Vec4
-  '' For compatibility
   return( v.normal() )
 end function
 
 function Vec4.normal() as Vec4
-  /'
-    Returns this vector normalized but without altering itself.
-    Again the homogeneous coordinate is left alone.
-  '/
+  '' Returns this vector normalized but without altering itself.
+  '' Again the homogeneous coordinate is left alone.
   dim as single l = 1.0 / length()
   dim as Vec4 v = Vec4( this )
   
@@ -131,19 +126,17 @@ function Vec4.normal() as Vec4
 end function
 
 sub Vec4.homogeneize()
-  /'
-    Homogeneizes the vector.
-    This is done by dividing the components by the homogeneous coordinate (w)
-  '/
+  '' Homogeneizes the vector.
+  '' This is done by dividing the components by the homogeneous coordinate (w).
   dim as single iw = 1.0 / w
+  
   x *= iw : y *= iw : z *= iw : w *= iw
 end sub
 
 function Vec4.homogeneous() as Vec4
-  /'
-    Returns this vector homogeneized but without altering it
-  '/
+  ''Returns this vector homogeneized but without altering it
   dim as single iw = 1.0 / w
+  
   return( Vec4( x * iw, y * iw, z * iw, w * iw ) )
 end function
 
