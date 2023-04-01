@@ -85,10 +85,10 @@ end operator
 operator Mat4.cast() as string
   '' The matrix in a human readable form (very useful for debugging purposes)
   return( _
-  "| " + trim( str( a ) ) + " | " + trim( str( b ) ) & " | " + trim( str( c ) ) & " | " + trim( str( d ) ) & " |" & chr( 13 ) & chr( 10 ) & _
-  "| " + trim( str( e ) ) + " | " + trim( str( f ) ) & " | " + trim( str( g ) ) & " | " + trim( str( h ) ) & " |" & chr( 13 ) & chr( 10 ) & _
-  "| " + trim( str( i ) ) + " | " + trim( str( j ) ) & " | " + trim( str( k ) ) & " | " + trim( str( l ) ) & " |" & chr( 13 ) & chr( 10 ) & _
-  "| " + trim( str( m ) ) + " | " + trim( str( n ) ) & " | " + trim( str( o ) ) & " | " + trim( str( p ) ) & " |" & chr( 13 ) & chr( 10 ) )
+    "| " + trim( str( a ) ) + " | " + trim( str( b ) ) + " | " + trim( str( c ) ) + " | " + trim( str( d ) ) + " |" + chr( 13, 10 ) + _
+    "| " + trim( str( e ) ) + " | " + trim( str( f ) ) + " | " + trim( str( g ) ) + " | " + trim( str( h ) ) + " |" + chr( 13, 10 ) + _
+    "| " + trim( str( i ) ) + " | " + trim( str( j ) ) + " | " + trim( str( k ) ) + " | " + trim( str( l ) ) + " |" + chr( 13, 10 ) + _
+    "| " + trim( str( m ) ) + " | " + trim( str( n ) ) + " | " + trim( str( o ) ) + " | " + trim( str( p ) ) + " |" + chr( 13, 10 ) )
 end operator
 
 function Mat4.determinant() as single
@@ -113,21 +113,21 @@ function Mat4.determinant() as single
       +	( c * ( e * ( j * p - l * n ) - f * ( i * p - l * m ) + h * ( i * n - j * m ) ) )
       - ( d * ( e * ( j * o - k * n ) - f * ( i * o - k * m ) + g * ( i * n - j * m ) ) )
   '/
-	dim as single det = _
+  dim as single det = _
       ( a * (	f * ( k * p - l * o ) - g * ( j * p - l * n ) + h * ( j * o - k * n ) ) ) _
     - ( b * ( e * ( k * p - l * o ) - g * ( i * p - l * m ) + h * ( i * o - k * m ) ) ) _
     +	( c * ( e * ( j * p - l * n ) - f * ( i * p - l * m ) + h * ( i * n - j * m ) ) ) _
     - ( d * ( e * ( j * o - k * n ) - f * ( i * o - k * m ) + g * ( i * n - j * m ) ) )
-	
-	/'
+  
+  /'
     This isn't matematically correct, just a programmer's dirty hack.
-    Ff the determinant of a matrix is 0, it means it has no inverse. In the code for
+    If the determinant of a matrix is 0, it means it has no inverse. In the code for
     calculating the inverse, a division by the determinant is performed; and if it is 
     zero, a division by zero is performed on *every* element of the matrix, filling it
     with positive or negative infinity values and rendering it useless. A matrix 
     without inverse is the matrix	itself, so setting the determinant value to 1 
     does the trick.
-	'/
+  '/
   return( iif( det = 0.0, 1.0, det ) )
 end function
 
@@ -361,11 +361,11 @@ end operator
 
 operator / ( s as single, A as Mat4 ) as Mat4
   /'
-  Scalar divide.
-  
-  The 'division' of a matrix by another matrix is not defined, the
-  equivalent operation is multiplying one matrix by the inverse of the other
-  on scalars though, it can be defined, mostly for convenience purposes
+    Scalar divide.
+    
+    The 'division' of a matrix by another matrix is not defined, the
+    equivalent operation is multiplying one matrix by the inverse of the other
+    on scalars though, it can be defined, mostly for convenience purposes
   '/
   return( Mat4( _
     A.a / s, A.b / s, A.c / s, A.d / s, _
