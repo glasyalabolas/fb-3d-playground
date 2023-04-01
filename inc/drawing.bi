@@ -66,12 +66,12 @@ sub line3D( cam as Camera, p1 As Vec4, p2 As Vec4, c as ulong, buffer as any ptr
 end sub
 
 sub point3D( cam as Camera, p As Vec4, c as ulong, buffer as any ptr = 0 )
-	'' Project the points
+  '' Project the points
   dim as Vec4 pos1 = cam.transform( p - cam.getPos() )
-
-	dim as single x1, y1, z1
-	
-	'' Do the perspective projection
+  
+  dim as single x1, y1, z1
+  
+  '' Do the perspective projection
   cam.perspective( pos1, cam.projectionPlane, x1, y1, z1 )
   
   '' And then draw the points
