@@ -9,15 +9,15 @@
 #include once "inc/object.bi"
 #include once "inc/models.bi"
 
-sub renderGrid( cam as Camera, w as long, h as long, c as ulong )
+sub renderGrid( cam as Camera, p as Vec4, w as long, h as long, c as ulong )
   dim as long hw = w shr 1, hh = h shr 1
   
   for z as integer = -hw to hw step 1
-    line3D( cam, Vec4( -hw, 0, z ), Vec4( hw, 0, z ), c )
+    line3D( cam, p + Vec4( -hw, 0, z ), p + Vec4( hw, 0, z ), c )
   next
   
   for x as integer = -hh to hh step 1
-    line3D( cam, Vec4( x, 0, -hh ), Vec4( x, 0, hh ), c )
+    line3D( cam, p + Vec4( x, 0, -hh ), p + Vec4( x, 0, hh ), c )
   next
 end sub
 
@@ -50,7 +50,7 @@ end sub
     angles are in RADIANS - use radians( angle_in_degrees ) for convenience
 '/
 
-const as integer scrW = 800, scrH = 600
+const as integer scrW = 600, scrH = 600
 screenRes( scrW, scrH, 32, , Fb.GFX_ALPHA_PRIMITIVES )
 windowTitle( "FreeBasic 3D Playground" )
 
@@ -100,7 +100,7 @@ dim as Rectangle projectionPlane = ( 0.0, 0.0, scrW, scrH )
   most important of all, have fun!
 '/
 var cam = Camera( _
-  Vec4( 2.0, 1.0,-2.0 ), _
+  Vec4( 0.5, 0.5, 0.0 ), _
   Vec4( 1.0, 0.0, 0.0 ), _
   Vec4( 0.0, 1.0, 0.0 ), _
   Vec4( 0.0, 0.0, -1.0 ), _
@@ -122,7 +122,9 @@ obj->color = rgb( 255, 255, 0 )
 objects.add( obj )
 
 '' Look at the object at the start
-cam.lookAt( obj->getPos() )
+cam.lookAt( Vec4( 0, 0.5, 10000 ) )
+
+'cam.lookAt( obj->getPos() )
 
 '' Some variables used for interaction
 dim as integer _
@@ -144,6 +146,9 @@ dim as single cameraSpeed = 5.0, planeSpeed = 5.0
 '' Main loop
 frameTime = timer()
 
+dim as long gridW = 10, gridH = 10
+dim as ulong gridColor = rgb( 0, 192, 0 )
+
 do		
   newTime = timer()
   
@@ -152,7 +157,8 @@ do
     cls()
     
     '' Draw the floor to have a frame of reference
-    renderGrid( cam, 10, 10, rgba( 32, 32, 32, 255 ) )
+    renderGrid( cam, Vec4( 0, 0, 0 ), gridW, gridH, gridColor )
+    renderGrid( cam, Vec4( 0, 1, 0 ), gridW, gridH, gridColor )
     
     /'
       Draw the absolute axes of the world
@@ -161,7 +167,7 @@ do
       y = green
       z = blue
     '/
-    renderAxes( cam )
+    'renderAxes( cam )
     
     '' Renders the objects
     renderObjects( cam, objects )
@@ -174,7 +180,7 @@ do
   oldMouseX = mouseX
   oldMouseY = mouseY
   
-  getMouse( mouseX, mouseY, , mouseButton )
+  dim as boolean mouseEvent = not cbool( getMouse( mouseX, mouseY, , mouseButton ) )
   
   '' Get a key press
   keyP = lcase( inkey() )
@@ -228,7 +234,7 @@ do
   end if
   
   '' If the left mouse button is pressed, activate free look mode
-  if( mouseButton and Fb.BUTTON_LEFT ) then
+  if( mouseEvent andAlso mouseButton and Fb.BUTTON_LEFT ) then
     '' Rotation about the Y axis of the WORLD (aka Yaw)
     cam.rotate( Vec4( 0.0, 1.0, 0.0 ), 320.0 * ( oldMouseX - mouseX ) / cam.projectionPlane.width * frameTime )
     '' Rotation about the X axis of the CAMERA (aka Pitch)
@@ -280,6 +286,30 @@ do
   
   if( multikey( Fb.SC_L ) ) then
     o->rotate( normalize( o->getV() ), radians( -150 * frameTime ) )
+  end if
+  
+  if( multikey( Fb.SC_1 ) ) then
+    cam.zoom( 1.01 )
+  end if
+  
+  if( multikey( Fb.SC_2 ) ) then
+    cam.zoom( 0.99 )
+  end if
+  
+  if( multikey( Fb.SC_3 ) ) then
+    cam.zoomU( 1.01 )
+  end if
+  
+  if( multikey( Fb.SC_4 ) ) then
+    cam.zoomU( 0.99 )
+  end if
+  
+  if( multikey( Fb.SC_5 ) ) then
+    cam.zoomV( 1.01 )
+  end if
+  
+  if( multikey( Fb.SC_6 ) ) then
+    cam.zoomV( 0.99 )
   end if
   
   if( followPlane = true ) then
