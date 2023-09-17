@@ -1,8 +1,6 @@
-#ifndef __FB3DPG_DRAWING__
-#define __FB3DPG_DRAWING__
-
-'' Auxiliary functions for performing some drawings on the 3D plane
-function clipSegment( cam as Camera, s1 as Vec4, s2 as Vec4 ) as integer
+'' Auxiliary functions for performing some drawings on the 3D plane.
+'' Mostly for debugging purposes.
+function clipSegment( cam as camera, s1 as Vec4, s2 as Vec4 ) as integer
   /'
     Clip both vertices of a line if necessary.
     
@@ -16,7 +14,7 @@ function clipSegment( cam as Camera, s1 as Vec4, s2 as Vec4 ) as integer
     Clipping (especially against the near plane) is important, because if you
     don't clip, when one of the line endpoints goes behind the near clipping
     plane, it gets a negative coordinate (due to the projection), and the line
-    segment is no longer valid
+    segment is no longer valid.
   '/
   if( s1.z >= cam.nearClip() andAlso s2.z >= cam.nearClip() ) then
     '' Neither one is behind the camera, draw them both
@@ -41,11 +39,10 @@ function clipSegment( cam as Camera, s1 as Vec4, s2 as Vec4 ) as integer
   end if
 end function
 
-sub line3D( cam as Camera, p1 As Vec4, p2 As Vec4, c as ulong, buffer as any ptr = 0 )
+sub drawLine3d( cam as camera, p1 As Vec4, p2 As Vec4, c as ulong, context as any ptr = 0 )
   '' Project the points
-  dim as Vec4 _
-    pos1 = cam.transform( p1 - cam.getPos() ), _
-    pos2 = cam.transform( p2 - cam.getPos() )
+  var pos1 = cam.transform( p1 - cam.getPos() )
+  var pos2 = cam.transform( p2 - cam.getPos() )
   
   dim as single x1, y1, x2, y2
   
@@ -60,22 +57,19 @@ sub line3D( cam as Camera, p1 As Vec4, p2 As Vec4, c as ulong, buffer as any ptr
     cam.perspective( pos1, cam.projectionPlane, x1, y1, z1 )
     cam.perspective( pos2, cam.projectionPlane, x2, y2, z2 )
     
-    '' And then draw a line connecting the two projected points
-    line buffer, ( x1, y1 ) - ( x2, y2 ), c
+    line context, ( x1, y1 ) - ( x2, y2 ), c
   end if
 end sub
 
-sub point3D( cam as Camera, p As Vec4, c as ulong, buffer as any ptr = 0 )
-  '' Project the points
-  dim as Vec4 pos1 = cam.transform( p - cam.getPos() )
+sub drawPoint3d( cam as camera, p As Vec4, c as ulong, context as any ptr = 0 )
+  '' Project the point
+  var pos1 = cam.transform( p - cam.getPos() )
   
   dim as single x1, y1, z1
   
-  '' Do the perspective projection
+  '' do the perspective projection
   cam.perspective( pos1, cam.projectionPlane, x1, y1, z1 )
   
-  '' And then draw the points
-  circle buffer, ( x1, y1 ), 2, c, , , , f
+  circle context, ( x1, y1 ), 2, c, , , , f
+  'pset context, ( x1, y1 ), c
 end sub
-
-#endif
