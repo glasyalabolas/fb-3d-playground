@@ -12,31 +12,31 @@
 'namespace Math
   '' Some convenience macros
   #ifndef max
-    #define max( a, b )            iif( a > b, a, b )
+    #define max( a, b )           iif( ( a ) > ( b ), a, b )
   #endif
   
   #ifndef min
-    #define min( a, b )            iif( a < b, a, b )
+    #define min( a, b )           iif( ( a ) < ( b ), a, b )
   #endif
   
   #ifndef clamp
-    #define clamp( mn, mx, v )    iif( v < mn, mn, iif( v > mx, mx, v ) )
+    #define clamp( mn, mx, v )    iif( ( v ) < ( mn ), mn, iif( ( v ) > ( mx ), mx, v ) )
   #endif
   
   #ifndef wrap
-    #define wrap( wrapValue, v )  ( ( v ) + wrapValue ) mod wrapValue
+    #define wrap( wrapValue, v )  ( ( v ) + ( wrapValue ) ) mod ( wrapValue )
   #endif
   
   #ifndef fwrap
-    #define fwrap( wrapValue, v )  ( fmod( ( v ) + wrapValue, wrapValue )
+    #define fwrap( wrapValue, v ) ( fmod( ( v ) + ( wrapValue ), wrapValue )
   #endif
   
   '' portable floating-point mod function
   #ifndef fmod
-    #define fmod( numer, denom )  numer - int( numer / denom ) * denom
+    #define fmod( numer, denom )  ( numer ) - int( numer / denom ) * denom
   #endif
   
-  '' useful constants
+  '' Useful constants
   const as single pi = 4 * atn( 1 )
   const as single twoPi = 2 * pi
   const as single halfPi = pi / 2
@@ -45,12 +45,12 @@
   const as single radToDeg = 180 / pi
   const as single epsilon = 0.00000001
   
-  '' used to express angles in another unit
+  '' Used to express angles in another unit
   #define radians( ang )  ang * degToRad
   #define degrees( ang )  ang * radToDeg
   
-  '' functions to return a delimited random value (uses FB implementation which
-  '' is a Mersenne Twister, can't remember the classification
+  '' Functions to return a delimited random value (uses FB implementation which
+  '' is a Mersenne Twister)
   declare function rndRange overload( byval as integer, byval as integer ) as integer
   declare function rndRange( byval as single, byval as single ) as single
   declare function rndRange( byval as double, byval as double ) as double
@@ -67,6 +67,8 @@
     return rnd() * ( mx - mn ) + mn
   end function  
   
+  '' Port of the famed 'Carmack's Reverse'
+  '' Computes the inverse square root of a number ( 1 / sqr( number ) )
   function q_rsqrt( number as single ) as single
     dim as long i
     dim as single x2, y
